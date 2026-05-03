@@ -317,9 +317,9 @@ const API = (() => {
         // Se estiver no Railway ou outro servidor, usa o URL actual
         // Se estiver local, usa localhost
         const host = window.location.hostname;
-        if(host === 'localhost' || host === '127.0.0.1') return 'https://web-production-d0e8e.up.railway.app';
+        if(host === 'localhost' || host === '127.0.0.1') return 'http://localhost:8000';
         // Muda para o teu URL do Railway quando fizeres deploy:
-        return 'https://web-production-d0e8e.up.railway.app';
+        return 'http://localhost:8000';
     })();
 let token = localStorage.getItem("pm_token") || "";
 if(token) showDash();
@@ -432,6 +432,7 @@ async function upgradeMember(id){
 function showAlert(id,msg,type){
     const el = document.getElementById(id);
     if(el) el.innerHTML=`<div class="alert ${type}" style="margin-top:12px">${msg}</div>`;
+    else console.log(`Alert [${type}]: ${msg}`);
 }
 
 document.addEventListener("keypress",e=>{ if(e.key==="Enter"&&document.getElementById("login-wrap").style.display!=="none") doLogin(); });
@@ -685,7 +686,8 @@ showPage = function(page, btn){
 
 
 async function sendResults(){
-    showAlert('results-result','A verificar resultados...','ok');
+    const el = document.getElementById('results-result') || document.getElementById('tg-result');
+    if(el) el.innerHTML = '<div class="alert ok">⏳ A verificar resultados...</div>';
     try{
         const r=await fetch(`${API}/admin/send-results`,{method:'POST',headers:{'x-admin-key':token}});
         const d=await r.json();
