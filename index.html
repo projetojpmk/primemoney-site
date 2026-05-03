@@ -923,37 +923,52 @@
     document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
     // Load real tips from API
+    const RAILWAY = 'https://web-production-d0e8e.up.railway.app';
+
     async function loadTips() {
         try {
-            const r = await fetch('https://web-production-d0e8e.up.railway.app/tips/today?max_tips=4&min_confidence=0.60');
+            const r = await fetch(`${RAILWAY}/tips/today?max_tips=10&min_confidence=0.50`);
             const tips = await r.json();
             if (!tips || !tips.length) return;
+
             const c = document.getElementById('live-tips');
-            c.innerHTML = tips.slice(0,2).map(t => `
-                <div class="tip-item">
-                    <div class="tip-left">
-                        <div class="match">${t.home_team} vs ${t.away_team}</div>
-                        <div class="league">${t.league} · ${t.date}</div>
-                    </div>
-                    <div class="tip-right">
-                        <div class="tip-badge">${t.prediction}</div>
-                        <div class="tip-conf">${t.confidence}% confiança</div>
-                    </div>
-                </div>`).join('') +
-            tips.slice(2,4).map(t => `
-                <div class="tip-item blurred">
-                    <div class="tip-left">
-                        <div class="match">${t.home_team} vs ${t.away_team}</div>
-                        <div class="league">${t.league}</div>
-                    </div>
-                    <div class="tip-right">
-                        <div class="tip-badge">${t.prediction}</div>
-                        <div class="tip-conf">${t.confidence}%</div>
-                    </div>
-                </div>`).join('');
-        } catch(e) {}
+            const visible = tips.slice(0, 2);
+            const locked = tips.slice(2, 6);
+
+            c.innerHTML =
+                visible.map(t => `
+                    <div class="tip-item">
+                        <div>
+                            <div class="tip-match">${t.home_team} vs ${t.away_team}</div>
+                            <div class="tip-league">${t.league}</div>
+                        </div>
+                        <div>
+                            <div class="tip-badge">${t.prediction}</div>
+                            <div class="tip-conf">${t.confidence}%</div>
+                        </div>
+                    </div>`).join('') +
+                locked.map(t => `
+                    <div class="tip-item locked">
+                        <div>
+                            <div class="tip-match">${t.home_team} vs ${t.away_team}</div>
+                            <div class="tip-league">${t.league}</div>
+                        </div>
+                        <div>
+                            <div class="tip-badge">${t.prediction}</div>
+                            <div class="tip-conf">${t.confidence}%</div>
+                        </div>
+                    </div>`).join('');
+
+            // Update lock counter
+            const lockEl = document.querySelector('.card-lock p');
+            if(lockEl) lockEl.textContent = `🔒 +${tips.length - 2} palpites disponíveis para membros VIP`;
+
+        } catch(e) {
+            console.log('API offline');
+        }
     }
     loadTips();
+    setInterval(loadTips, 5 * 60 * 1000);
 
     // Exit intent popup
     let popupShown = false;
