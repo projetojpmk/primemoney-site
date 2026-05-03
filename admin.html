@@ -429,9 +429,9 @@ async function upgradeMember(id){
     try{ await fetch(`${API}/members/${id}/plan?plan=vip`,{method:"PUT",headers:{"x-admin-key":token}}); loadMembers(); }catch(e){}
 }
 
-function showAlert(id, msg, type){
+function showAlert(id,msg,type){
     const el = document.getElementById(id);
-    if(el) el.innerHTML = `<div class="alert ${type}" style="margin-top:12px">${msg}</div>`;
+    if(el) el.innerHTML=`<div class="alert ${type}" style="margin-top:12px">${msg}</div>`;
 }
 
 document.addEventListener("keypress",e=>{ if(e.key==="Enter"&&document.getElementById("login-wrap").style.display!=="none") doLogin(); });
@@ -685,14 +685,12 @@ showPage = function(page, btn){
 
 
 async function sendResults(){
-    showAlert('results-result', '⏳ A verificar resultados...', 'ok');
+    showAlert('results-result','A verificar resultados...','ok');
     try{
-        const r = await fetch(`${API}/admin/send-results`, {method:'POST', headers:{'x-admin-key':token}});
-        const d = await r.json();
-        showAlert('results-result', d.success ? `✅ ${d.message}` : `❌ ${d.message}`, d.success?'ok':'err');
-    } catch(e) {
-        showAlert('results-result', '❌ Servidor offline', 'err');
-    }
+        const r=await fetch(`${API}/admin/send-results`,{method:'POST',headers:{'x-admin-key':token}});
+        const d=await r.json();
+        showAlert('results-result',d.success?`✅ ${d.message}`:`❌ ${d.message}`,d.success?'ok':'err');
+    }catch(e){showAlert('results-result','❌ Servidor offline','err');}
 }
 
 async function doBackup(){
