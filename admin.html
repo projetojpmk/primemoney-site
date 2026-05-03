@@ -313,14 +313,7 @@
 </div>
 
 <script>
-const API = (() => {
-        // Se estiver no Railway ou outro servidor, usa o URL actual
-        // Se estiver local, usa localhost
-        const host = window.location.hostname;
-        if(host === 'web-production-d0e8e.up.railway.app' || host === '127.0.0.1') return 'web-production-d0e8e.up.railway.app';
-        // Muda para o teu URL do Railway quando fizeres deploy:
-        return 'hweb-production-d0e8e.up.railway.app';
-    })();
+const API = 'https://web-production-d0e8e.up.railway.app';
 let token = localStorage.getItem("pm_token") || "";
 if(token) showDash();
 
